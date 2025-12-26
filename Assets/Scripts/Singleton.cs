@@ -7,7 +7,14 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
     private protected virtual void OnEnable()
     {
-        Instance = this as T;
-        if (dontDestroyOnLoad) DontDestroyOnLoad(gameObject);
+        if (Instance == null)
+        {
+            Instance = this as T;
+            if (dontDestroyOnLoad) DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

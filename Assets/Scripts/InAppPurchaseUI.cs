@@ -34,11 +34,13 @@ public class InAppPurchaseUI : Singleton<InAppPurchaseUI>
 
     private void OnUnlockButtonPressed()
     {
-        if (CheckIfAlreadyRemoved() == false) RemoveAds();
-        else Debug.Log("Ads have already been removed.");
+        if (AreAdsRemoved()) Debug.Log("Ads have already been removed.");
+        else RemoveAds();
+
+        Hide();
     }
 
-    private bool CheckIfAlreadyRemoved()
+    public static bool AreAdsRemoved()
     {
         return DataManager.GetBoolFromSave("hasRemovedAds"); // check if ads have been removed
     }
@@ -47,6 +49,5 @@ public class InAppPurchaseUI : Singleton<InAppPurchaseUI>
     {
         Debug.Log("Ads Removed!");
         DataManager.SaveBool("hasRemovedAds", true); // remove ads and save change to storage
-        Hide();
     }
 }
