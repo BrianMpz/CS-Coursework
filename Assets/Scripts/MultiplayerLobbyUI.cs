@@ -24,14 +24,14 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
 
     private void Start()
     {
-        Show();
+        Show(); // this screen should always shw throughout the scene
 
-        SetNumberOfPlayersPlaying(MIN_NUMBER_OF_PLAYERS);
+        SetNumberOfPlayersPlaying(MIN_NUMBER_OF_PLAYERS); // reset to default
 
         SetKeybindScreen.SetActive(false); // hide the set keybind screen
 
-        backButton.onClick.AddListener(OnBackButtonPressed);
-        playButton.onClick.AddListener(OnPlayButtonPressed);
+        backButton.onClick.AddListener(OnBackButtonPressed); // leave on button press
+        playButton.onClick.AddListener(OnPlayButtonPressed); // start on button press
     }
 
     private void Show()
@@ -41,17 +41,20 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
 
     private void SetKeyBindForPlayer(KeyCode _keybind, int _player) // updates the list to the player's preferred keybind
     {
-        playerKeybinds[_player] = _keybind;
-        OnKeybindsChanged?.Invoke();
+        playerKeybinds[_player] = _keybind; // change keybind at specific index of the player
+        OnKeybindsChanged?.Invoke(); // allert listeners to this change
     }
 
     public IEnumerator OnKeyBindSetButtonPressed(int _player)
     {
         SetKeybindScreen.SetActive(true); // show the set keybind screen
 
-        yield return new WaitUntil(() => KeybindManager.HasALegalKeybindBeenPressed()); // wait until a legal keybind is pressed
+        List<KeyCode> excludedKeybinds = new(playerKeybinds);
+        excludedKeybinds.RemoveAt(_player); // remove the current player's keybind from the excluded list
 
-        foreach (KeyCode keycode in KeybindManager.GetLegalKeybinds())
+        yield return new WaitUntil(() => KeybindManager.HasALegalKeybindBeenPressed(excludedKeybinds)); // wait until a legal keybind is pressed
+
+        foreach (KeyCode keycode in KeybindManager.GetLegalKeybinds()) // go through each legal and if its down then we set it
         {
             if (Input.GetKeyDown(keycode))
             {
@@ -77,15 +80,16 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
     {
         if (_newValue > MAX_NUMBER_OF_PLAYERS || _newValue < MIN_NUMBER_OF_PLAYERS) return; // cant set higher than the max
 
-        numberOfPlayers = _newValue;
+        numberOfPlayers = _newValue; // set to the new value
 
-        while (playerKeybinds.Count < numberOfPlayers)
+        while (playerKeybinds.Count < numberOfPlayers) // pad out unset keybinds with nothing
         {
             playerKeybinds.Add(KeyCode.None);
             int addedIndex = playerKeybinds.Count - 1;
             playerKeybinds[addedIndex] = KeyCode.Alpha1 + addedIndex; // default keybinds are 1, 2, 3, 4, 5
         }
 
+        // alert listeners
         OnNumberOfPlayersChanged?.Invoke(numberOfPlayers);
         OnKeybindsChanged?.Invoke();
     }

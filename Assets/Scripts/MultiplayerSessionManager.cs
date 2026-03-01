@@ -19,15 +19,16 @@ public class MultiplayerSessionManager : Singleton<MultiplayerSessionManager>
     public void Initialize(List<Color> _playerColors, List<KeyCode> _playerKeybinds, int _numberOfPlayers)
     {
         if (_playerKeybinds.Count != _numberOfPlayers)
-            Debug.LogError("Internal Error: number of players doesn not match the amount of keybinds!");
+            Debug.LogError("Internal Error: number of players doesn not match the amount of keybinds!"); // throw an error if there is a discrepancy between the amount of players and keybinds
 
+        // initualise values
         PlayerColors = _playerColors;
         playerKeybinds = _playerKeybinds;
         playerScores = new int[_numberOfPlayers];
 
         DontDestroyOnLoad(gameObject); // persist between scenes
 
-        StartCoroutine(StartRoundPlayingLoop());
+        StartCoroutine(StartRoundPlayingLoop()); //  start the gameplay loop
     }
 
     private IEnumerator StartRoundPlayingLoop() // starts rouund, waits for the round to end and awards the player a point. check for an overall winner
@@ -36,59 +37,58 @@ public class MultiplayerSessionManager : Singleton<MultiplayerSessionManager>
 
         while (true)
         {
-            rounds++;
+            rounds++; // increment number of rounds
 
             StartRound();
 
-            yield return new WaitUntil(() => hasLoadedGameScene);
+            yield return new WaitUntil(() => hasLoadedGameScene); // wait until the game has loaded
 
-            Debug.Log($"Round {rounds} has started!");
+            print($"Round {rounds} has started!");
 
-            yield return new WaitUntil(() => hasRoundEnded == true);
+            yield return new WaitUntil(() => hasRoundEnded == true); // wait until the round has ended
 
-            Debug.Log($"Round {rounds} has ended!");
+            print($"Round {rounds} has ended!");
 
-            int finalPlayer = GetRemainingPlayerIndex();
+            int finalPlayer = GetRemainingPlayerIndex(); // get the amount of players remaining
 
-            Debug.Log($"Player {finalPlayer + 1} has won");
+            print($"Player {finalPlayer + 1} has won");
 
-            AwardPlayerAPoint(finalPlayer);
+            AwardPlayerAPoint(finalPlayer); // award this winner a point
 
-            ShowRoundResults(finalPlayer);
+            ShowRoundResults(finalPlayer); // display results to the users
 
-            if (HasPlayerWon())
+            if (HasPlayerWon()) // end the cycle if a player reaches the win thresholds
             {
-                RoundResultsUI.Instance.SetWinText(finalPlayer, PlayerColors[finalPlayer]);
-                yield break;
+                RoundResultsUI.Instance.SetWinText(finalPlayer, PlayerColors[finalPlayer]); // display to user
+                yield break; // break out
             }
 
-            yield return new WaitUntil(() => RoundResultsUI.Instance.nextRound);
+            yield return new WaitUntil(() => RoundResultsUI.Instance.nextRound); // wait until green light is given to move on
         }
     }
 
     private void StartRound()
     {
         hasRoundEnded = false;
-        Loader.LoadScene(Scene.GameScene);
-
-        SceneManager.sceneLoaded += LoadedScene;
+        Loader.LoadScene(Scene.GameScene); // call the loader to load the scene
+        SceneManager.sceneLoaded += LoadedScene; // listen to when this scene is loaded
         hasLoadedGameScene = false;
     }
 
     private void LoadedScene(UnityEngine.SceneManagement.Scene _, LoadSceneMode __)
     {
-        SceneManager.sceneLoaded -= LoadedScene;
-        hasLoadedGameScene = true;
+        SceneManager.sceneLoaded -= LoadedScene; // unsubscribe
+        hasLoadedGameScene = true; // close flag to confirm that it has loaded
     }
 
-    public void SkipGame() // TODO: remove later
+    public void SkipGame() // TODO: remove later (for debug purposes only)
     {
         hasRoundEnded = true;
     }
 
     private int GetRemainingPlayerIndex()
     {
-        return UnityEngine.Random.Range(0, playerKeybinds.Count);
+        return UnityEngine.Random.Range(0, playerKeybinds.Count); // for now, we just choose a random player to win (TODO: replace with actual winner)
     }
 
     private bool HasPlayerWon()
@@ -108,14 +108,14 @@ public class MultiplayerSessionManager : Singleton<MultiplayerSessionManager>
         playerScores[_playerIndex]++; // awards the correct player a point based off their index
     }
 
-    private void ShowRoundResults(int _player)
+    private void ShowRoundResults(int _player) // display results
     {
         RoundResultsUI.Instance.Show(playerScores, PlayerColors, rounds, HasPlayerWon(), _player);
     }
 
-    public void Quit()
+    public void Quit() // quit to main menu
     {
-        Destroy(gameObject);
+        Destroy(gameObject); // discard this singleton
         Loader.LoadScene(Scene.MainMenu);
     }
 }

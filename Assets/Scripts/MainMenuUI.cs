@@ -9,6 +9,7 @@ public class MainMenuUI : Singleton<MainMenuUI>
     [SerializeField] private Button MultiplayButton;
     [SerializeField] private Button ShopButton;
     [SerializeField] private Button QuitButton;
+    [SerializeField] private Button ClearDataButton;
     [SerializeField] private Canvas Canvas; // script that holds and manages UI Elements
 
     private void Start()
@@ -17,6 +18,7 @@ public class MainMenuUI : Singleton<MainMenuUI>
         MultiplayButton.onClick.AddListener(OnMultiplayButtonPressed);
         ShopButton.onClick.AddListener(OnShopButtonPressed);
         QuitButton.onClick.AddListener(OnQuitButtonPressed);
+        ClearDataButton.onClick.AddListener(ClearAllData);
 
         Show();
     }
@@ -48,6 +50,11 @@ public class MainMenuUI : Singleton<MainMenuUI>
 
     private void OnQuitButtonPressed()
     {
-        Application.Quit(); // leave the game
+        LeaveConfirmScreen.Instance.Show(); // show leave confirmation screen
+    }
+
+    private void ClearAllData()
+    {
+        DataManager.ClearAllData(); // clear all saved data
     }
 }

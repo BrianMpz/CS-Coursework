@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ScoreManager : Singleton<ScoreManager>
 {
-    private int currentScore;
+    [SerializeField] private int currentScore;
     private int highScore;
 
     void Awake()
@@ -15,15 +15,16 @@ public class ScoreManager : Singleton<ScoreManager>
     {
         currentScore = 0;
         highScore = DataManager.GetIntFromSave("High Score"); // retrieve from memory
-        Debug.Log($"Score: {currentScore}");
-        Debug.Log($"Best: {highScore}");
+
+        print($"Score: {currentScore:N0}"); // formatted to have commas
+        print($"Best: {highScore:N0}"); // formatted to have commas
     }
 
     public int GetScore() => currentScore;
     public int GetHighScore() => highScore;
     public void IncrementScore()
     {
-        currentScore++;
+        currentScore += 1;
 
         if (currentScore > highScore)
         {

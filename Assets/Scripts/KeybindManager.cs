@@ -67,22 +67,23 @@ public static class KeybindManager
         { KeyCode.KeypadDivide, "Numpad /" },
     };
 
-    public static List<KeyCode> GetLegalKeybinds()
+    public static List<KeyCode> GetLegalKeybinds() // returns all the legal keybinds
     {
         return Map.Keys.ToList();
     }
 
-    public static string KeyCodeToString(KeyCode key)
+    public static string KeyCodeToString(KeyCode key) // returns the game of the screen
     {
         return Map.ContainsKey(key) ? Map[key] : "null";
     }
 
-    public static bool HasALegalKeybindBeenPressed()
+    public static bool HasALegalKeybindBeenPressed(List<KeyCode> excludedKeybinds) // checks if key is legal
     {
-        foreach (KeyValuePair<KeyCode, string> entry in Map)
+        foreach (KeyValuePair<KeyCode, string> entry in Map) // go through each key and check if it nhas been pressed
         {
             if (Input.GetKeyDown(entry.Key))
             {
+                if (excludedKeybinds.Contains(entry.Key)) continue;
                 return true;
             }
         }

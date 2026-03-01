@@ -1,5 +1,6 @@
 // Manages in-app purchase UI and all of the logic
 // Fulfills Criterion 4, 5
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,8 @@ public class InAppPurchaseUI : Singleton<InAppPurchaseUI>
     [SerializeField] private Button BackButton;
     [SerializeField] private Button UnlockButton;
     [SerializeField] private Canvas Canvas; // script that holds and manages UI Elements
+
+    [SerializeField] private TMP_Text IAPText;
 
     private void Start()
     {
@@ -20,6 +23,7 @@ public class InAppPurchaseUI : Singleton<InAppPurchaseUI>
     public void Show()
     {
         Canvas.enabled = true; // enable UI
+        IAPText.text = "*In-App Purchase: Remove Ads*";
     }
 
     private void Hide()
@@ -34,10 +38,8 @@ public class InAppPurchaseUI : Singleton<InAppPurchaseUI>
 
     private void OnUnlockButtonPressed()
     {
-        if (AreAdsRemoved()) Debug.Log("Ads have already been removed.");
+        if (AreAdsRemoved()) IAPText.text = "*Ads have already been removed!*";
         else RemoveAds();
-
-        Hide();
     }
 
     public static bool AreAdsRemoved()
@@ -47,7 +49,7 @@ public class InAppPurchaseUI : Singleton<InAppPurchaseUI>
 
     private void RemoveAds()
     {
-        Debug.Log("Ads Removed!");
+        IAPText.text = "*Ads Removed!*";
         DataManager.SaveBool("hasRemovedAds", true); // remove ads and save change to storage
     }
 }

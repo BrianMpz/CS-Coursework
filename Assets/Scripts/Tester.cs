@@ -18,21 +18,21 @@ public class Tester : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Debug.Log("Loading MainMenu Scene");
+            print("Loading MainMenu Scene");
             Loader.LoadScene(Scene.MainMenu);
-            Debug.Log("Loaded MainMenu Scene");
+            print("Loaded MainMenu Scene");
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            Debug.Log("Loading MultiplayerLobby Scene");
+            print("Loading MultiplayerLobby Scene");
             Loader.LoadScene(Scene.MultiplayerLobby);
-            Debug.Log("Loaded MultiplayerLobby Scene");
+            print("Loaded MultiplayerLobby Scene");
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            Debug.Log("Loading GameScene Scene");
+            print("Loading GameScene Scene");
             Loader.LoadScene(Scene.GameScene);
-            Debug.Log("Loaded GameScene Scene");
+            print("Loaded GameScene Scene");
         }
     }
 
@@ -40,6 +40,6 @@ public class Tester : MonoBehaviour
     {
         DataManager.SaveInt("HighScore", 100);
         int highScore = DataManager.GetIntFromSave("HighScore");
-        Debug.Log("High Score: " + highScore);
+        print("High Score: " + highScore);
     }
 }

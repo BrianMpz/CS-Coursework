@@ -16,7 +16,7 @@ public class PlayerStatObject : MonoBehaviour
     {
         bar.color = _color;
         Image[] playerImages = playerModel.GetComponentsInChildren<Image>();
-        foreach (Image image in playerImages)
+        foreach (Image image in playerImages) // for each body part in the stick figure, set to the player's color
         {
             image.color = _color;
         }
@@ -24,6 +24,6 @@ public class PlayerStatObject : MonoBehaviour
 
     private void SetWinBar(int wins)
     {
-        bar.fillAmount = (float)wins / MultiplayerSessionManager.WIN_THRESHOLD;
+        bar.fillAmount = (float)wins / MultiplayerSessionManager.WIN_THRESHOLD; // show how close the player is to winning
     }
 }
