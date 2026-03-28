@@ -202,10 +202,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0394080c4a21af4683fbcd15288aeee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerID: 0
-  playerModel: {fileID: 5778865901185357345}
-  playerKeybind: {fileID: 3414522040466113272}
-  setKeybindButton: {fileID: 5373499638561768970}
+  PlayerID: 0
+  PlayerModel: {fileID: 5778865901185357345}
+  PlayerKeybind: {fileID: 3414522040466113272}
+  SetKeybindButton: {fileID: 5373499638561768970}
 --- !u!1 &3791786820731769664
 GameObject:
   m_ObjectHideFlags: 0

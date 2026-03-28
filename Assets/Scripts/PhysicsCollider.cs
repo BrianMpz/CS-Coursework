@@ -4,13 +4,13 @@ using UnityEngine;
 public class PhysicsCollider : MonoBehaviour
 {
     [SerializeField] private new Collider2D collider2D;
-
     public event Action<Collider2D> OnCollision;
 
     public bool IsCollidingWithPlatform()
     {
         Collider2D[] hits = GetCollidingObjects();
 
+        // iterate through each object that we are colliding with and check thatone of tem is a platfiorm
         foreach (Collider2D hit in hits)
         {
             if (hit.gameObject.CompareTag("Platform")) return true; // true if its a platform

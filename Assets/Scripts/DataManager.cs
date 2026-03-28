@@ -4,42 +4,42 @@ using UnityEngine;
 // Fulfils Criterion 1, 8
 public static class DataManager
 {
-    public static string GetStringFromSave(string _name) // returns string
+    public static string GetStringFromSave(string _name) // returns string using unity's playerprefs sysem
     {
         return PlayerPrefs.GetString(_name);
     }
 
-    public static float GetFloatFromSave(string _name) // returns float
+    public static float GetFloatFromSave(string _name) // returns float using unity's playerprefs sysem
     {
         return PlayerPrefs.GetFloat(_name);
     }
 
-    public static int GetIntFromSave(string _name) // returns int
+    public static int GetIntFromSave(string _name) // returns int using unity's playerprefs sysem
     {
         return PlayerPrefs.GetInt(_name);
     }
 
     public static bool GetBoolFromSave(string _name) // returns bool (bools cant be stored directly so is converted to/from string)
     {
-        string value = PlayerPrefs.GetString(_name);
+        string _value = PlayerPrefs.GetString(_name);
 
-        if (value == "True")
+        if (_value == "True")
             return true;
         else
             return false;
     }
 
-    public static void SaveString(string _name, string _newValue) // saves string
+    public static void SaveString(string _name, string _newValue) // saves string using unity's playerprefs sysem
     {
         PlayerPrefs.SetString(_name, _newValue);
     }
 
-    public static void SaveFloat(string _name, float _newValue) // saves float
+    public static void SaveFloat(string _name, float _newValue) // saves float using unity's playerprefs sysem
     {
         PlayerPrefs.SetFloat(_name, _newValue);
     }
 
-    public static void SaveInt(string _name, int _newValue) // saves int
+    public static void SaveInt(string _name, int _newValue) // saves int using unity's playerprefs sysem
     {
         PlayerPrefs.SetInt(_name, _newValue);
     }

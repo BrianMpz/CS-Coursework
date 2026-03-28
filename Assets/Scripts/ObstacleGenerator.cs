@@ -19,9 +19,9 @@ class ObstacleGenerator : Singleton<ObstacleGenerator>
 
     private GameObject SpawnObject()
     {
-        GameObject obstacle = Instantiate(Prefab, transform); // create the obstacle
-        obstacle.transform.localPosition = Vector2.zero; // reset position
-        return obstacle;
+        GameObject _obstacle = Instantiate(Prefab, transform); // create the obstacle
+        _obstacle.transform.localPosition = Vector2.zero; // reset position
+        return _obstacle;
     }
 
     private void FixedUpdate()
@@ -39,13 +39,13 @@ class ObstacleGenerator : Singleton<ObstacleGenerator>
         }
         StartingPlatform.transform.localPosition += scrollRate * Time.fixedDeltaTime * Vector3.left;
 
-        if (ObstaclePrefabs.Peek().transform.localPosition.x < -1500) // if the obstacle is definitely out of frame then destroy it
+        if (ObstaclePrefabs.Peek().transform.localPosition.x < -4200) // if the obstacle is definitely out of frame then destroy it
         {
-            GameObject dequeuedObstacle = ObstaclePrefabs.Dequeue();
-            Destroy(dequeuedObstacle);
+            GameObject _dequeuedObstacle = ObstaclePrefabs.Dequeue();
+            Destroy(_dequeuedObstacle);
         }
 
-        else if (ObstaclePrefabs.Last().transform.localPosition.x < -1200) // if the obstable is almost out of frame then spawn a new one
+        else if (ObstaclePrefabs.Last().transform.localPosition.x < -3900) // if the obstable is almost out of frame then spawn a new one
         {
             ObstaclePrefabs.Enqueue(SpawnObject());
         }

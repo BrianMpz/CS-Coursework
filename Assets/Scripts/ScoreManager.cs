@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ScoreManager : Singleton<ScoreManager>
 {
-    [SerializeField] private int currentScore;
+    private int currentScore;
     private int highScore;
 
     void Awake()
@@ -26,6 +26,7 @@ public class ScoreManager : Singleton<ScoreManager>
     {
         currentScore += 1;
 
+        // set a new high score if the new score is higher than the highscore
         if (currentScore > highScore)
         {
             highScore = currentScore;

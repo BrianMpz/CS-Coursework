@@ -1,16 +1,34 @@
 using System;
+using NUnit.Framework;
 using UnityEngine;
 
+// manages logic for the player
 public class PlayerObject : PhysicsObject
 {
-    [SerializeField] private PhysicsCollider topGroundCheck;
-    [SerializeField] private PhysicsCollider bottomGroundCheck;
-    [SerializeField] private Transform playerModel;
+    [SerializeField] private PhysicsCollider TopGroundCheck;
+    [SerializeField] private PhysicsCollider BottomGroundCheck;
+    [SerializeField] private Transform PlayerModel;
+    [SerializeField] private SpriteRenderer Appearance;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private float timeSinceLastGroundTouch;
+    private float timeSinceLastSwitchInput;
+    private const float COYOTE_TIME = 0.2f;
+    private bool isTouchingJumpOrb;
+    public KeyCode myKeyBind;
+
+    void Awake()
     {
+        timeSinceLastSwitchInput = COYOTE_TIME; // consume buffer
+        timeSinceLastGroundTouch = COYOTE_TIME; // consume buffer
         SubscribeToCollisions();
+        gameObject.SetActive(false); // hide
+    }
+
+    public void Initialise(Color _color, KeyCode _keyCode)
+    {
+        gameObject.SetActive(true); // show
+        Appearance.color = _color; // set color to according player color
+        myKeyBind = _keyCode; // set keybind to according player keybind
     }
 
     private void SubscribeToCollisions() // subscribe to all colliders' collision events
@@ -29,9 +47,11 @@ public class PlayerObject : PhysicsObject
         leftCollider.OnCollision -= HandleCollsion;
     }
 
-    private void HandleCollsion(Collider2D collider)
+    private void HandleCollsion(Collider2D _collider)
     {
-        switch (collider.tag)
+        isTouchingJumpOrb = false;
+
+        switch (_collider.tag)
         {
             case "Platform":
                 // do nothing
@@ -40,13 +60,19 @@ public class PlayerObject : PhysicsObject
                 KillPlayer();
                 break;
             case "Special":
-                Jump(collider);
+                isTouchingJumpOrb = true;
+                if (timeSinceLastSwitchInput < COYOTE_TIME) // if the player has recently inputted
+                {
+                    Jump(_collider); // execute jump
+                    timeSinceLastSwitchInput = COYOTE_TIME; // consume buffer
+                    timeSinceLastGroundTouch = COYOTE_TIME; // consume buffer
+                }
                 break;
             case "Boundary":
                 KillPlayer();
                 break;
             case "Checkpoint":
-                CheckPointHit(collider);
+                CheckPointHit(_collider);
                 break;
         }
     }
@@ -57,35 +83,60 @@ public class PlayerObject : PhysicsObject
         GameManager.Instance.StartCoroutine(GameManager.Instance.OnPlayerDeath(this)); // notify the game managers
     }
 
-    private void CheckPointHit(Collider2D collider) // when the player is killed
+    private void CheckPointHit(Collider2D _collider) // when the player is killed
     {
         ScoreManager.Instance.IncrementScore();
-        collider.enabled = false;
+        _collider.enabled = false;
     }
 
-    private void Jump(Collider2D collider) // when the the special object is pressed
+    private void Jump(Collider2D _collider) // when the the special object is pressed
     {
-        Vector2 JumpForce = new(0, 70);
+        Vector2 _JumpForce = new(0, 100);
 
         ResetYVeloctiy();
-        ApplyForce(JumpForce); // Jump
+        ApplyForce(_JumpForce); // Jump
         ApplyDisplacement(currentVelocity);
-        collider.enabled = false; // disable collider
+        _collider.enabled = false; // disable collider
     }
 
     private bool IsGrounded()
     {
         // If either of the checkers are touching the platform then you can switch
-        return topGroundCheck.IsCollidingWithPlatform() || bottomGroundCheck.IsCollidingWithPlatform();
+        return TopGroundCheck.IsCollidingWithPlatform() || BottomGroundCheck.IsCollidingWithPlatform();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        HandleInvertGravityInput();
+
+        PlayerModel.localScale = new(1.84f, 1.84f * (int)currentGravityDirection, 1.84f);
+    }
+
+    private void HandleInvertGravityInput()
+    {
+        bool _isTouchingGround = IsGrounded();
+        if (Input.GetKeyDown(myKeyBind)) // if an input is requested
         {
+            if ((_isTouchingGround || timeSinceLastGroundTouch < COYOTE_TIME) && !isTouchingJumpOrb) // if we are touching the ground then just switch gravity
+            {
+                InvertGravity();
+                timeSinceLastSwitchInput = COYOTE_TIME; // consume buffer
+            }
+            else // note for the future that the player tried to switch gravity
+            {
+                timeSinceLastSwitchInput = 0;
+            }
+        }
+        else if (_isTouchingGround && timeSinceLastSwitchInput < COYOTE_TIME && !isTouchingJumpOrb)
+        {
+            // if we tried to switch gravity and we are only touching the ground now, then switch
             InvertGravity();
+            timeSinceLastSwitchInput = COYOTE_TIME; // consume buffer
         }
 
-        playerModel.localScale = new(1, (int)currentGravityDirection, 1);
+        if (!_isTouchingGround) // if we are not gounded then add to the timer
+            timeSinceLastGroundTouch += Time.deltaTime;
+
+        timeSinceLastSwitchInput += Time.deltaTime; // we alsways add to this timer regardless
     }
 }

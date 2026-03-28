@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// alloes players to confirm wether they actually want to leave or not
 public class LeaveConfirmScreen : Singleton<LeaveConfirmScreen>
 {
     [SerializeField] private Canvas Canvas;
@@ -14,23 +15,12 @@ public class LeaveConfirmScreen : Singleton<LeaveConfirmScreen>
         Hide();
     }
 
-    public void Show()
-    {
-        Canvas.enabled = true;
-    }
+    public void Show() => Canvas.enabled = true;
 
-    private void Hide()
-    {
-        Canvas.enabled = false;
-    }
+    private void Hide() => Canvas.enabled = false;
 
-    private void OnYesButtonPressed()
-    {
-        Application.Quit();
-    }
+    private void OnYesButtonPressed() => Application.Quit();
 
-    private void OnNoButtonPressed()
-    {
-        Hide();
-    }
+    private void OnNoButtonPressed() => Hide();
+
 }

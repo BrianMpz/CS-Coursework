@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// handles the IAP UI
 public class InAppPurchaseUI : Singleton<InAppPurchaseUI>
 {
     [SerializeField] private Button BackButton;
@@ -16,8 +17,7 @@ public class InAppPurchaseUI : Singleton<InAppPurchaseUI>
     {
         BackButton.onClick.AddListener(OnBackButtonPressed);
         UnlockButton.onClick.AddListener(OnUnlockButtonPressed);
-
-        Hide();
+        Hide(); // initially hide
     }
 
     public void Show()

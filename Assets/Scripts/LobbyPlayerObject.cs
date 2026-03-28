@@ -2,16 +2,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// player model in the lobby
 public class LobbyPlayerObject : MonoBehaviour
 {
-    [SerializeField] private int playerID; // the ID of the player
-    [SerializeField] private GameObject playerModel; // the model of the player
-    [SerializeField] private TMP_Text playerKeybind; // the keybind of the player
-    [SerializeField] private Button setKeybindButton; // the button of the player
+    [SerializeField] private int PlayerID; // the ID of the player
+    [SerializeField] private GameObject PlayerModel; // the model of the player
+    [SerializeField] private TMP_Text PlayerKeybind; // the keybind of the player
+    [SerializeField] private Button SetKeybindButton; // the button of the player
 
     private void Start()
     {
-        setKeybindButton.onClick.AddListener(SetKeyBindForPlayer);
+        SetKeybindButton.onClick.AddListener(SetKeyBindForPlayer);
         MultiplayerLobbyUI.Instance.OnKeybindsChanged += OnKeybindsChanged;
         MultiplayerLobbyUI.Instance.OnNumberOfPlayersChanged += OnNumberOfPlayersChanged;
         SetColor();
@@ -19,11 +20,13 @@ public class LobbyPlayerObject : MonoBehaviour
 
     private void SetColor() // go though all images in the player model and set their color to the player's color
     {
-        Color _color = MultiplayerLobbyUI.Instance.PlayerColors[playerID];
-        Image[] playerImages = playerModel.GetComponentsInChildren<Image>();
-        foreach (Image image in playerImages)
+        Color _color = MultiplayerLobbyUI.Instance.PlayerColors[PlayerID];
+        Image[] _playerImages = PlayerModel.GetComponentsInChildren<Image>();
+
+        // goes through each part of the player model and sets it to the color
+        foreach (Image _image in _playerImages)
         {
-            image.color = _color;
+            _image.color = _color;
         }
     }
 
@@ -31,19 +34,19 @@ public class LobbyPlayerObject : MonoBehaviour
     {
         if (!gameObject.activeSelf) return;
 
-        KeyCode currentKeybind = MultiplayerLobbyUI.Instance.GetKeybindForPlayer(playerID);
-        playerKeybind.text = $"[{KeybindManager.KeyCodeToString(currentKeybind)}]";
+        KeyCode _currentKeybind = MultiplayerLobbyUI.Instance.GetKeybindForPlayer(PlayerID);
+        PlayerKeybind.text = $"[{KeybindManager.KeyCodeToString(_currentKeybind)}]";
     }
 
     private void OnNumberOfPlayersChanged(int _newNumberOfPlayers) // enable or disable the player object based on the number of players
     {
-        bool enabled = playerID < _newNumberOfPlayers;
-        gameObject.SetActive(enabled);
+        bool _enabled = PlayerID < _newNumberOfPlayers;
+        gameObject.SetActive(_enabled);
     }
 
     private void SetKeyBindForPlayer() // updates the keybind text
     {
-        StartCoroutine(MultiplayerLobbyUI.Instance.OnKeyBindSetButtonPressed(playerID));
+        StartCoroutine(MultiplayerLobbyUI.Instance.OnKeyBindSetButtonPressed(PlayerID));
     }
 
 }

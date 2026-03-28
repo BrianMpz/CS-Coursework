@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class PlayerStatObject : MonoBehaviour
 {
-    [SerializeField] private GameObject playerModel; // the model of the player
-    [SerializeField] private Image bar; // the fill bar
+    [SerializeField] private GameObject PlayerModel; // the model of the player
+    [SerializeField] private Image Bar; // the fill bar
 
     public void Initialize(int _wins, Color _color)
     {
@@ -14,16 +14,16 @@ public class PlayerStatObject : MonoBehaviour
 
     private void SetColor(Color _color)
     {
-        bar.color = _color;
-        Image[] playerImages = playerModel.GetComponentsInChildren<Image>();
-        foreach (Image image in playerImages) // for each body part in the stick figure, set to the player's color
+        Bar.color = _color;
+        Image[] _playerImages = PlayerModel.GetComponentsInChildren<Image>();
+        foreach (Image image in _playerImages) // for each body part in the stick figure, set to the player's color
         {
             image.color = _color;
         }
     }
 
-    private void SetWinBar(int wins)
+    private void SetWinBar(int _wins)
     {
-        bar.fillAmount = (float)wins / MultiplayerSessionManager.WIN_THRESHOLD; // show how close the player is to winning
+        Bar.fillAmount = (float)_wins / MultiplayerSessionManager.WIN_THRESHOLD; // show how close the player is to winning
     }
 }

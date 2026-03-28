@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 
+// handles the round results
 public class RoundResultsUI : Singleton<RoundResultsUI>
 {
     [SerializeField] private PlayerStatObject[] playerStatObjects;
@@ -64,9 +65,9 @@ public class RoundResultsUI : Singleton<RoundResultsUI>
         winnerText.color = _playerColors[_roundWinner]; // set the color to the color of the player
     }
 
-    public void SetWinText(int _playerIndex, Color color)
+    public void SetWinText(int _playerIndex, Color _color)
     {
         winText.text = $"PLAYER {_playerIndex + 1} HAS WON"; // tailor the win screen to the winner
-        winText.color = color; // set the color to the color of the player
+        winText.color = _color; // set the color to the color of the player
     }
 }

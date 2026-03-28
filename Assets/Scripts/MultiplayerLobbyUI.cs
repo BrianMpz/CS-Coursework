@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// manages all multiplayer lobby UI logic
 public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
 {
     private const int MAX_NUMBER_OF_PLAYERS = 5;
@@ -16,8 +17,8 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
     [SerializeField] private Canvas Canvas; // script that holds and manages UI Elements
     [SerializeField] private GameObject SetKeybindScreen; // screen that appears when setting keybinds
 
-    [SerializeField] private Button backButton; // kepps track of the player's color
-    [SerializeField] private Button playButton; // kepps track of the player's color
+    [SerializeField] private Button BackButton; // kepps track of the player's color
+    [SerializeField] private Button PlayButton; // kepps track of the player's color
 
     public event Action OnKeybindsChanged; // event for when a player's keybind is changed
     public event Action<int> OnNumberOfPlayersChanged; // event for when the number of players is changed
@@ -30,8 +31,8 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
 
         SetKeybindScreen.SetActive(false); // hide the set keybind screen
 
-        backButton.onClick.AddListener(OnBackButtonPressed); // leave on button press
-        playButton.onClick.AddListener(OnPlayButtonPressed); // start on button press
+        BackButton.onClick.AddListener(OnBackButtonPressed); // leave on button press
+        PlayButton.onClick.AddListener(OnPlayButtonPressed); // start on button press
     }
 
     private void Show()
@@ -49,16 +50,16 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
     {
         SetKeybindScreen.SetActive(true); // show the set keybind screen
 
-        List<KeyCode> excludedKeybinds = new(playerKeybinds);
-        excludedKeybinds.RemoveAt(_player); // remove the current player's keybind from the excluded list
+        List<KeyCode> _excludedKeybinds = new(playerKeybinds);
+        _excludedKeybinds.RemoveAt(_player); // remove the current player's keybind from the excluded list
 
-        yield return new WaitUntil(() => KeybindManager.HasALegalKeybindBeenPressed(excludedKeybinds)); // wait until a legal keybind is pressed
+        yield return new WaitUntil(() => KeybindManager.HasALegalKeybindBeenPressed(_excludedKeybinds)); // wait until a legal keybind is pressed
 
-        foreach (KeyCode keycode in KeybindManager.GetLegalKeybinds()) // go through each legal and if its down then we set it
+        foreach (KeyCode _keycode in KeybindManager.GetLegalKeybinds()) // go through each legal and if its down then we set it
         {
-            if (Input.GetKeyDown(keycode))
+            if (Input.GetKeyDown(_keycode))
             {
-                SetKeyBindForPlayer(keycode, _player);
+                SetKeyBindForPlayer(_keycode, _player);
                 SetKeybindScreen.SetActive(false); // hide the set keybind screen
                 break;
             }
@@ -72,7 +73,7 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
 
     private void OnPlayButtonPressed() // start the game
     {
-        playButton.gameObject.SetActive(false);
+        PlayButton.gameObject.SetActive(false);
         MultiplayerSessionManager.Instance.Initialize(PlayerColors, playerKeybinds, numberOfPlayers);
     }
 
@@ -85,8 +86,8 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
         while (playerKeybinds.Count < numberOfPlayers) // pad out unset keybinds with nothing
         {
             playerKeybinds.Add(KeyCode.None);
-            int addedIndex = playerKeybinds.Count - 1;
-            playerKeybinds[addedIndex] = KeyCode.Alpha1 + addedIndex; // default keybinds are 1, 2, 3, 4, 5
+            int _addedIndex = playerKeybinds.Count - 1;
+            playerKeybinds[_addedIndex] = KeyCode.Alpha1 + _addedIndex; // default keybinds are 1, 2, 3, 4, 5
         }
 
         // alert listeners

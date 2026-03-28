@@ -15,6 +15,7 @@ public class MultiplayerSessionManager : Singleton<MultiplayerSessionManager>
     private bool hasRoundEnded;
     private bool hasLoadedGameScene;
     public int rounds;
+    public int remainingPlayerIndex;
 
     public void Initialize(List<Color> _playerColors, List<KeyCode> _playerKeybinds, int _numberOfPlayers)
     {
@@ -31,6 +32,10 @@ public class MultiplayerSessionManager : Singleton<MultiplayerSessionManager>
         StartCoroutine(StartRoundPlayingLoop()); //  start the gameplay loop
     }
 
+    public List<Color> GetColors() => PlayerColors;
+    public List<KeyCode> GetKeyCodes() => playerKeybinds;
+    public int GetNumPlayers() => playerScores.Length;
+
     private IEnumerator StartRoundPlayingLoop() // starts rouund, waits for the round to end and awards the player a point. check for an overall winner
     {
         rounds = 0;
@@ -38,6 +43,7 @@ public class MultiplayerSessionManager : Singleton<MultiplayerSessionManager>
         while (true)
         {
             rounds++; // increment number of rounds
+            remainingPlayerIndex = -1; // nobody can be the remaining player yet
 
             StartRound();
 
@@ -45,11 +51,11 @@ public class MultiplayerSessionManager : Singleton<MultiplayerSessionManager>
 
             print($"Round {rounds} has started!");
 
-            yield return new WaitUntil(() => hasRoundEnded == true); // wait until the round has ended
+            yield return new WaitUntil(() => hasRoundEnded == true && remainingPlayerIndex != -1); // wait until the round has ended
 
             print($"Round {rounds} has ended!");
 
-            int finalPlayer = GetRemainingPlayerIndex(); // get the amount of players remaining
+            int finalPlayer = remainingPlayerIndex; // get the amount of players remaining
 
             print($"Player {finalPlayer + 1} has won");
 
@@ -81,18 +87,17 @@ public class MultiplayerSessionManager : Singleton<MultiplayerSessionManager>
         hasLoadedGameScene = true; // close flag to confirm that it has loaded
     }
 
-    public void SkipGame() // TODO: remove later (for debug purposes only)
+    public void EndMultiplayerGame(KeyCode _key)
     {
-        hasRoundEnded = true;
-    }
+        playerKeybinds.ForEach(x => Debug.Log(x));
 
-    private int GetRemainingPlayerIndex()
-    {
-        return UnityEngine.Random.Range(0, playerKeybinds.Count); // for now, we just choose a random player to win (TODO: replace with actual winner)
+        remainingPlayerIndex = playerKeybinds.IndexOf(_key);
+        hasRoundEnded = true;
     }
 
     private bool HasPlayerWon()
     {
+        // go though each player score and check if theyve met the threshold
         foreach (int playerScore in playerScores) // enumerates through each player and checks if the have won
         {
             if (playerScore == WIN_THRESHOLD)

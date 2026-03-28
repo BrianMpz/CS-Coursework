@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// handles the legal keybinds
 public static class KeybindManager
 {
     private static readonly Dictionary<KeyCode, string> Map = new()
@@ -72,18 +73,18 @@ public static class KeybindManager
         return Map.Keys.ToList();
     }
 
-    public static string KeyCodeToString(KeyCode key) // returns the game of the screen
+    public static string KeyCodeToString(KeyCode _key) // returns the game of the screen
     {
-        return Map.ContainsKey(key) ? Map[key] : "null";
+        return Map.ContainsKey(_key) ? Map[_key] : "null";
     }
 
-    public static bool HasALegalKeybindBeenPressed(List<KeyCode> excludedKeybinds) // checks if key is legal
+    public static bool HasALegalKeybindBeenPressed(List<KeyCode> _excludedKeybinds) // checks if key is legal
     {
         foreach (KeyValuePair<KeyCode, string> entry in Map) // go through each key and check if it nhas been pressed
         {
             if (Input.GetKeyDown(entry.Key))
             {
-                if (excludedKeybinds.Contains(entry.Key)) continue;
+                if (_excludedKeybinds.Contains(entry.Key)) continue;
                 return true;
             }
         }

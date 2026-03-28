@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// handles pausing the game
 public class PauseUI : Singleton<PauseUI>
 {
     public bool IsPaused;
@@ -21,13 +22,13 @@ public class PauseUI : Singleton<PauseUI>
     private void Pause()
     {
         IsPaused = true;
-        Canvas.enabled = true;
+        Canvas.enabled = true; // show
     }
 
     private void Unpause()
     {
         IsPaused = false;
-        Canvas.enabled = false;
+        Canvas.enabled = false; // hide
     }
 
     private void QuitGame()

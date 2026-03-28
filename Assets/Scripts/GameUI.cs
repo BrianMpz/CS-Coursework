@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+// handles the game UI
 public class GameUI : Singleton<GameUI>
 {
     [SerializeField] private Button SkipButton;
@@ -11,30 +12,15 @@ public class GameUI : Singleton<GameUI>
     [SerializeField] private TMP_Text PromptText;
     [SerializeField] private Button AddPointButton;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        // setup the UI differently based on if its multiplayer
-        if (GameManager.Instance.IsMultiplayer) // multiplayer
-        {
-            SkipButton.onClick.AddListener(MultiplayerSessionManager.Instance.SkipGame);
-        }
-        else // singleplayer 
-        {
-            AddPointButton.onClick.AddListener(ScoreManager.Instance.IncrementScore);
-            SkipButton.onClick.AddListener(GameManager.Instance.EndGame);
-        }
-    }
-
     private void Update()
     {
         ScoreText.text = ScoreManager.Instance.GetScore().ToString("N0"); // formatted to have commas
     }
 
-    public void ShowPrompt(string message)
+    public void ShowPrompt(string _message)
     {
         PromptText.enabled = true; // show prompt
-        PromptText.text = message; // set prompt to parameter
+        PromptText.text = _message; // set prompt to parameter
     }
 
     public void HidePrompt()
