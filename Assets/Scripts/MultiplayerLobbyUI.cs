@@ -22,6 +22,7 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
 
     public event Action OnKeybindsChanged; // event for when a player's keybind is changed
     public event Action<int> OnNumberOfPlayersChanged; // event for when the number of players is changed
+    private bool hasSetDefaultPlayers;
 
     private void Start()
     {
@@ -33,6 +34,15 @@ public class MultiplayerLobbyUI : Singleton<MultiplayerLobbyUI>
 
         BackButton.onClick.AddListener(OnBackButtonPressed); // leave on button press
         PlayButton.onClick.AddListener(OnPlayButtonPressed); // start on button press
+    }
+
+    private void Update()
+    {
+        if (!hasSetDefaultPlayers) // set default players on the first frame to avoid issues with order of operations
+        {
+            SetNumberOfPlayersPlaying(MIN_NUMBER_OF_PLAYERS);
+            hasSetDefaultPlayers = true;
+        }
     }
 
     private void Show()

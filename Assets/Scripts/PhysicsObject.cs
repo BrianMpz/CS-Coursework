@@ -1,10 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
 // handles the physics for a single object
 public class PhysicsObject : MonoBehaviour
 {
-    [SerializeField] private Transform objectTransform;
-    [SerializeField] private float gravitationalConstant;
+    public Transform objectTransform;
+    public float gravitationalConstant;
 
     // all of the physics colliders
     [SerializeField] private protected PhysicsCollider topCollider;
@@ -116,8 +117,8 @@ public class PhysicsObject : MonoBehaviour
         float _currentXPos = _currentPosition.x; // cache currentXPos
         float _currentYPos = _currentPosition.y; // cache currentYPos
 
-        float _newXPos = _currentXPos + (_displacement.x * Time.fixedDeltaTime); // add horizontal displacement to the current postion
-        float _newYPos = _currentYPos + (_displacement.y * Time.fixedDeltaTime); // add vertical displacement to the current postion
+        float _newXPos = _currentXPos + (_displacement.x * Time.fixedDeltaTime * ScoreManager.Instance.GameSpeed); // add horizontal displacement to the current postion
+        float _newYPos = _currentYPos + (_displacement.y * Time.fixedDeltaTime * ScoreManager.Instance.GameSpeed); // add vertical displacement to the current postion
 
         Vector2 _newPosition = new(_newXPos, _newYPos); // calculate new postion
         objectTransform.localPosition = _newPosition; // apply new position to object

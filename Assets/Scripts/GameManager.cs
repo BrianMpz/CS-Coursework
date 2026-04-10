@@ -107,7 +107,7 @@ public class GameManager : Singleton<GameManager>
             ObstacleGenerator.Instance.scrollRate = Mathf.Lerp(_baseScrollRate, 0, _timer / _pulseDuration); // use linear interpolation
 
             // add to timer
-            _timer += Time.deltaTime; // add to the timer
+            _timer += Time.deltaTime * ScoreManager.Instance.GameSpeed; // add to the timer
             yield return null; // wait for a frame
         }
 

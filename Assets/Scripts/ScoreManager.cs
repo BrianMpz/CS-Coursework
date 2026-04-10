@@ -5,10 +5,12 @@ public class ScoreManager : Singleton<ScoreManager>
 {
     private int currentScore;
     private int highScore;
+    public float GameSpeed;
 
     void Awake()
     {
         GameManager.Instance.OnGameStart += Initialize; // initialise when the game starts
+        GameSpeed = 1f; // default game speed
     }
 
     private void Initialize()

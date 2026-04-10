@@ -35,9 +35,9 @@ class ObstacleGenerator : Singleton<ObstacleGenerator>
 
         foreach (GameObject obstacle in ObstaclePrefabs) // iterate through the obstacles and shift it down
         {
-            obstacle.transform.localPosition += scrollRate * Time.fixedDeltaTime * Vector3.left;
+            obstacle.transform.localPosition += scrollRate * Time.fixedDeltaTime * ScoreManager.Instance.GameSpeed * Vector3.left;
         }
-        StartingPlatform.transform.localPosition += scrollRate * Time.fixedDeltaTime * Vector3.left;
+        StartingPlatform.transform.localPosition += scrollRate * Time.fixedDeltaTime * ScoreManager.Instance.GameSpeed * Vector3.left;
 
         if (ObstaclePrefabs.Peek().transform.localPosition.x < -4200) // if the obstacle is definitely out of frame then destroy it
         {

@@ -33,6 +33,13 @@ public class PauseUI : Singleton<PauseUI>
 
     private void QuitGame()
     {
-        Loader.LoadScene(Scene.MainMenu);
+        if (MultiplayerSessionManager.Instance != null)
+        {
+            MultiplayerSessionManager.Instance.Quit(); // quit to main menu
+        }
+        else
+        {
+            Loader.LoadScene(Scene.MainMenu); // quit to main menu
+        }
     }
 }

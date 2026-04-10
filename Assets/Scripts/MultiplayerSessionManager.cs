@@ -120,7 +120,7 @@ public class MultiplayerSessionManager : Singleton<MultiplayerSessionManager>
 
     public void Quit() // quit to main menu
     {
-        Destroy(gameObject); // discard this singleton
+        if (gameObject != null) Destroy(gameObject); // discard this singleton
         Loader.LoadScene(Scene.MainMenu);
     }
 }

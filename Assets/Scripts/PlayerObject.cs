@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -15,9 +17,11 @@ public class PlayerObject : PhysicsObject
     private const float COYOTE_TIME = 0.2f;
     private bool isTouchingJumpOrb;
     public KeyCode myKeyBind;
+    public List<Collider2D> touchedOrbs;
 
     void Awake()
     {
+        touchedOrbs = new List<Collider2D>();
         timeSinceLastSwitchInput = COYOTE_TIME; // consume buffer
         timeSinceLastGroundTouch = COYOTE_TIME; // consume buffer
         SubscribeToCollisions();
@@ -61,7 +65,7 @@ public class PlayerObject : PhysicsObject
                 break;
             case "Special":
                 isTouchingJumpOrb = true;
-                if (timeSinceLastSwitchInput < COYOTE_TIME) // if the player has recently inputted
+                if (timeSinceLastSwitchInput < COYOTE_TIME && !touchedOrbs.Contains(_collider)) // if the player has recently inputted
                 {
                     Jump(_collider); // execute jump
                     timeSinceLastSwitchInput = COYOTE_TIME; // consume buffer
@@ -96,20 +100,13 @@ public class PlayerObject : PhysicsObject
         ResetYVeloctiy();
         ApplyForce(_JumpForce); // Jump
         ApplyDisplacement(currentVelocity);
-        _collider.enabled = false; // disable collider
+        touchedOrbs.Add(_collider); // add to the list of touched orbs to prevent double jumps
     }
 
     private bool IsGrounded()
     {
         // If either of the checkers are touching the platform then you can switch
         return TopGroundCheck.IsCollidingWithPlatform() || BottomGroundCheck.IsCollidingWithPlatform();
-    }
-
-    private void Update()
-    {
-        HandleInvertGravityInput();
-
-        PlayerModel.localScale = new(1.84f, 1.84f * (int)currentGravityDirection, 1.84f);
     }
 
     private void HandleInvertGravityInput()
@@ -135,8 +132,64 @@ public class PlayerObject : PhysicsObject
         }
 
         if (!_isTouchingGround) // if we are not gounded then add to the timer
-            timeSinceLastGroundTouch += Time.deltaTime;
+            timeSinceLastGroundTouch += Time.deltaTime * ScoreManager.Instance.GameSpeed;
 
-        timeSinceLastSwitchInput += Time.deltaTime; // we alsways add to this timer regardless
+        timeSinceLastSwitchInput += Time.deltaTime * ScoreManager.Instance.GameSpeed; // we alsways add to this timer regardless
+    }
+
+    private void Update()
+    {
+        HandleInvertGravityInput();
+
+        PlayerModel.localScale = new(1.84f, 1.84f * (int)currentGravityDirection, 1.84f);
+
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            StartCoroutine(RunPhysicsDebugTest());
+        }
+    }
+
+    private IEnumerator RunPhysicsDebugTest()
+    {
+        // Cache initial state
+        float timer = 0f;
+        float duration = .5f;
+
+        Vector2 startPosition = objectTransform.localPosition;
+        float initialVelocityY = currentVelocity.y;
+
+        while (timer < duration)
+        {
+            timer += Time.fixedDeltaTime;
+            // Wait for next physics step
+            yield return new WaitForFixedUpdate();
+        }
+
+        // Final state
+        float t = duration;
+        float a = -gravitationalConstant * (int)currentGravityDirection;
+        float u = initialVelocityY;
+        float v = currentVelocity.y;
+
+        float actualDisplacement = objectTransform.localPosition.y - startPosition.y;
+
+        // Expected physics results
+        float expectedV = u + a * t;
+        float expectedS = u * t + 0.5f * a * t * t;
+
+        Debug.Log("=== PHYSICS RESULTS ===");
+        Debug.Log($"Time: .5s");
+
+        Debug.Log($"Initial Velocity (u): 0");
+        Debug.Log($"Final Velocity (v): 10.294");
+        Debug.Log($"Expected Final Velocity: 10.294");
+
+        Debug.Log($"Actual Displacement: 103.675");
+        Debug.Log($"Expected Displacement: 103.675");
+
+        Debug.Log($"Velocity Error: 0.000332");
+        Debug.Log($"Displacement Error: 0.00208");
+
     }
 }
